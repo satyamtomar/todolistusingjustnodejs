@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 module.exports = {
   fetchlist: async (req, res) => {
     try {
-      const lists = await List.find({ user: req.user.id });
+      const lists = await List.find();
       res.json(lists);
     } catch (err) {
       console.error(error.message);
@@ -25,7 +25,6 @@ module.exports = {
         title,
         description,
         checked: false,
-        user: req.user.id,
       });
       const savedlist = await list.save();
       res.json(savedlist);
@@ -58,9 +57,6 @@ module.exports = {
         res.status(404).send("Not Found");
       }
 
-      if (list.user.toString() !== req.user.id) {
-        return res.status(401).send("Not Allowed");
-      }
 
       list = await List.findByIdAndUpdate(
         req.params.id,
@@ -86,9 +82,6 @@ module.exports = {
       }
 
       //Allow deletion only if user owns the list
-      if (list.user.toString() !== req.user.id) {
-        return res.status(401).send("Not Allowed");
-      }
 
       list = await List.findByIdAndDelete(req.params.id);
     //   console.log("delle", list);

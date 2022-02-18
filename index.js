@@ -18,7 +18,6 @@ app.use(express.static(__dirname + '/public'));
 
 // use res.render to load up an ejs view file
 
-app.use("/api/auth", require("./routes/auth"));
 app.use("/api/list", require("./routes/list"));
 
 // index page
