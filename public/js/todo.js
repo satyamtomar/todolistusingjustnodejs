@@ -2,10 +2,13 @@ var taskInput = document.getElementById("new-task"); //new-task
 var addButton = document.getElementsByTagName("button")[0]; //first button
 var incompleteTasksHolder = document.getElementById("incomplete-tasks"); //incomplete-tasks
 var completedTasksHolder = document.getElementById("completed-tasks"); //completed-tasks
-
+let  notes=[];
+const host="http://localhost:5000"
 //New Task List Item
+
 var createNewTaskElement = function(taskString) {
 	//Create List Item
+	console.log(taskString,"idddddd")
 	var listItem = document.createElement("li");
 
 	//input (checkbox)
@@ -28,8 +31,8 @@ var createNewTaskElement = function(taskString) {
 	editButton.className = "edit";
 	deleteButton.innerText = "Delete";
 	deleteButton.className = "delete";
-
-	label.innerText = taskString;
+    deleteButton.id = taskString._id;
+	label.innerText = taskString.description;
 
 	//Each element needs appending
 	listItem.appendChild(checkBox);
@@ -42,17 +45,56 @@ var createNewTaskElement = function(taskString) {
 }
 
 //Add a new task
-var addTask = function() {
+var addTask =async function() {
+    const response = await fetch(`${host}/api/list/addlist`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify({  description: taskInput.value }),
+    });
+    let note = await response.json();
+    // setNotes(notes.concat(note));
+    
 	console.log("Add task...");
 	//Create a new list item with the text from #new-task:
-	var listItem = createNewTaskElement(taskInput.value);
+	var listItem = createNewTaskElement(note);
 	//Append listItem to incompleteTasksHolder
 	incompleteTasksHolder.appendChild(listItem);
-	bindTaskEvents(listItem, taskCompleted);
+	bindTaskEvents(listItem, taskCompleted,note);
 
 	taskInput.value = "";
 }
+var fetchall =async function() {
+	
+	const response = await fetch(`${host}/api/list/fetchlist`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": localStorage.getItem("token"),
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      })
+	  const jsonnn = await response.json();
+      console.log(jsonnn);
+      notes=jsonnn;
 
+      console.log(notes);
+	  notes.forEach(element => {
+        console.log(element.description);
+		var listItem = createNewTaskElement(element);
+		//Append listItem to incompleteTasksHolder
+		incompleteTasksHolder.appendChild(listItem);
+		bindTaskEvents(listItem, taskCompleted,element);
+	     
+		
+	  }
+		  
+	  );
+}
+
+fetchall();
 //Edit an existing task
 var editTask = function() {
 	console.log("Edit task...");
@@ -81,7 +123,21 @@ var editTask = function() {
 }
 
 //Delete an existing task
-var deleteTask = function() {
+
+var deleteTask = async function(id) {
+	
+    const response = await fetch(`${host}/api/list/deletelist/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+    const json = await response.json();
+         console.log('del mdg',json)
+    //  //console.log("deleting the node"+id);
+   
 	console.log("Delete task...");
 	var listItem = this.parentNode;
 	var ul = listItem.parentNode;
@@ -96,7 +152,7 @@ var taskCompleted = function() {
 	//Append the task list item to the #completed-tasks
 	var listItem = this.parentNode;
 	completedTasksHolder.appendChild(listItem);
-	bindTaskEvents(listItem, taskIncomplete);
+	bindTaskEvents(listItem, taskIncomplete,);
 }
 
 //Mark a task as incomplete
@@ -105,10 +161,10 @@ var taskIncomplete = function() {
 	//Append the task list item to the #incomplete-tasks
 	var listItem = this.parentNode;
 	incompleteTasksHolder.appendChild(listItem);
-	bindTaskEvents(listItem, taskCompleted);
+	bindTaskEvents(listItem, taskCompleted, );
 }
 
-var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
+var bindTaskEvents = function(taskListItem, checkBoxEventHandler,obj) {
 	console.log("Bind list item events");
 	//select taskListItem's children
 	var checkBox = taskListItem.querySelector("input[type=checkbox]");
@@ -119,7 +175,11 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
 	editButton.onclick = editTask;
 
 	//bind deleteTask to delete button
-	deleteButton.onclick = deleteTask;
+	// deleteButton.onclick = deleteTask;
+	deleteButton.addEventListener("click", function() {
+		deleteTask(obj)
+	})
+
 
 	//bind checkBoxEventHandler to checkbox
 	checkBox.onchange = checkBoxEventHandler;

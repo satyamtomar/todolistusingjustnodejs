@@ -3,10 +3,7 @@ const { Schema } = mongoose;
 
 const listSchema = new Schema({
     
-  title: {
-    type: String,
-    required: true,
-  },
+  
   description: {
     type: String,
     required: true,

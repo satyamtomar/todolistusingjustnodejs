@@ -5,14 +5,14 @@ const listss = require("../controllers/list");
 const evalid = require("../middleware/expressvalid");
 router
   .route("/fetchlist")
-  .get(fetchuser, evalid.validate("vfetchlist"), listss.fetchlist);
+  .get( evalid.validate("vfetchlist"), listss.fetchlist);
 
 router
   .route("/addlist")
-  .post(fetchuser, evalid.validate("vaddlist"), listss.addlist);
+  .post( evalid.validate("vaddlist"), listss.addlist);
 
-router.route("/updatelist/:id").put(fetchuser, listss.updatelist);
+router.route("/updatelist/:id").put( listss.updatelist);
 
-router.route("/deletelist/:id").delete(fetchuser, listss.deletelist);
+router.route("/deletelist/:id").delete( listss.deletelist);
 
 module.exports = router;

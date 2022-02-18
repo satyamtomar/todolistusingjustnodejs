@@ -21,13 +21,13 @@ exports.validate = (method) => {
     }
     case "vfetchlist": {
       return [
-        body("title", "Enter a valid title").isLength({ min: 1 }),
+        
         body("description", "Enter a valid description").isLength({ min: 1 }),
       ];
     }
     case "vaddlist": {
       return [
-        body("title", "Enter a valid title").isLength({ min: 1 }),
+       
         body("description", "Enter a valid description").isLength({ min: 1 }),
       ];
     }

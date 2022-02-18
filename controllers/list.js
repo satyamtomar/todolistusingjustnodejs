@@ -5,6 +5,7 @@ module.exports = {
   fetchlist: async (req, res) => {
     try {
       const lists = await List.find();
+      console.log(lists,"fetcccchhh");
       res.json(lists);
     } catch (err) {
       console.error(error.message);
@@ -14,15 +15,15 @@ module.exports = {
 
   addlist: async (req, res) => {
     try {
-      const { title, description } = req.body;
+      const {  description } = req.body;
       //if there are errors, returns bad request
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        
         return res.status(400).json({ errors: errors.array() });
       }
 
       const list = new List({
-        title,
         description,
         checked: false,
       });
