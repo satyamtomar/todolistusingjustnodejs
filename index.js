@@ -35,10 +35,5 @@ app.get('/', function(req, res) {
   });
 });
 
-// about page
-app.get('/about', function(req, res) {
-  res.render('pages/about');
-});
-
 app.listen(port);
 console.log(`Server is listening on port ${port}`);
